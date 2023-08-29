@@ -1,0 +1,25 @@
+{
+  "name": "full-stack-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alastair7/full-stack-backend.git"
+  },
+  "keywords": [
+    "Backend",
+    "NodeJS",
+    "Express",
+    "API"
+  ],
+  "author": "Alexandru Ban",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Alastair7/full-stack-backend/issues"
+  },
+  "homepage": "https://github.com/Alastair7/full-stack-backend#readme"
+}
