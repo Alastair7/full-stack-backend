@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   {
     id: 1,
@@ -41,6 +43,16 @@ app.get("/api/persons/:id", (request, response) => {
     response.statusMessage = "Person not found.";
     response.status(404).end();
   }
+});
+
+app.post("/api/persons", (request, response) => {
+  const person = request.body;
+  const randomId = Math.random(0, 9000);
+
+  person.id = randomId;
+
+  persons = persons.concat(person);
+  response.json(person);
 });
 
 app.delete("/api/persons/:id", (request, response) => {
