@@ -46,8 +46,19 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
+  if (!request.body.name || !request.body.number) {
+    return response.status(400).json({
+      error: "Content Missing",
+    });
+  }
   const person = request.body;
   const randomId = Math.random(0, 9000);
+
+  if (persons.some((person) => person.name === request.body.name)) {
+    return response.status(400).json({
+      error: "Name must be unique",
+    });
+  }
 
   person.id = randomId;
 
