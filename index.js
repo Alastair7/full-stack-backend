@@ -8,6 +8,7 @@ morgan.token("person", (req) => {
 
 const app = express();
 app.use(cors());
+app.use(express.static("build"));
 app.use(express.json());
 app.use(morgan(":method :url :status - :response-time ms :person"));
 
