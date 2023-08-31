@@ -1,1 +1,4 @@
 GET http://localhost:3001/api/persons
+
+### PRODUCTION REQUEST
+GET https://phonebook-service-nrh6.onrender.com/api/persons
