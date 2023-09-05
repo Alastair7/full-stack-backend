@@ -14,40 +14,34 @@ app.use(express.static("build"));
 app.use(express.json());
 app.use(morgan(":method :url :status - :response-time ms :person"));
 
-if (process.argv.length < 1) {
-  console.log("Give password as argument");
-  process.exit(1);
-}
-if (process.argv.length === 5) {
-  person.save().then((result) => {
-    console.log("Person saved.");
-    mongoose.connection.close();
-  });
-}
+const errorHandler = (error, request, response, next) => {
+  console.log("Error Handler Middleware accessed");
+  console.error(error.message);
 
-if (process.argv.length === 3) {
-  Persons.find({}).then((result) => {
-    result.forEach((person) => {
-      console.log(person);
-    });
-    mongoose.connection.close();
-  });
-}
+  console.log(error.name);
+  if (error.name === "CastError") {
+    console.log("Cast Error type");
+    return response.status(400).send({ error: "Malformatted ID" });
+  }
+  next(error);
+};
 
 app.get("/", (request, response) => {
   response.send(`<h1>Hello World!</h1>`);
 });
 
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result);
-  });
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 app.get("/api/persons/:id", (request, response) => {
   Person.findById(request.params.id).then((person) => response.json(person));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -60,24 +54,29 @@ app.post("/api/persons", (request, response) => {
     number: body.number,
   });
 
-  person.save().then((savedPerson) => {
-    console.log("SavedPerson:", savedPerson);
-    response.json(person);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      console.log("SavedPerson:", savedPerson);
+      response.json(person);
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  Person.findByIdAndRemove(request.params.id).then((result) => {
-    response.status(204).end();
-  });
-
-  response.status(204).end();
+app.delete("/api/persons/:id", (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.get("/info", (request, response) => {
   response.send(`<p>Phonebook has info for ${persons.length} people</p>
   <p>${new Date()}</p>`);
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 
