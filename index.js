@@ -37,8 +37,10 @@ app.get("/api/persons", (request, response, next) => {
     })
     .catch((error) => next(error));
 });
-app.get("/api/persons/:id", (request, response) => {
-  Person.findById(request.params.id).then((person) => response.json(person));
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => response.json(person))
+    .catch((error) => next(error));
 });
 
 app.post("/api/persons", (request, response, next) => {
@@ -87,8 +89,10 @@ app.put("/api/persons/:id", (request, response, next) => {
 });
 
 app.get("/info", (request, response) => {
-  response.send(`<p>Phonebook has info for ${persons.length} people</p>
-  <p>${new Date()}</p>`);
+  Person.find({}).then((result) => {
+    response.send(`<p>Phonebook has info for ${result.length} people</p>
+    <p>${new Date()}</p>`);
+  });
 });
 
 app.use(errorHandler);
