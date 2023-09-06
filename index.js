@@ -9,9 +9,10 @@ morgan.token("person", (req) => {
 });
 
 const app = express();
-app.use(express.static("build"));
+app.use(cors());
 app.use(express.json());
 app.use(morgan(":method :url :status - :response-time ms :person"));
+app.use(express.static("build"));
 
 const errorHandler = (error, request, response, next) => {
   console.log("Error Handler Middleware accessed");
@@ -27,8 +28,6 @@ const errorHandler = (error, request, response, next) => {
   }
   next(error);
 };
-
-app.use(cors());
 
 app.get("/", (request, response) => {
   response.send(`<h1>Hello World!</h1>`);
