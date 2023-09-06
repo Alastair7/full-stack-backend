@@ -22,6 +22,9 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     console.log("Cast Error type");
     return response.status(400).send({ error: "Malformatted ID" });
+  } else if (error.name === "ValidationError") {
+    console.log("Accessing Validation Error");
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
@@ -45,6 +48,8 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.post("/api/persons", (request, response, next) => {
   const body = request.body;
+
+  console.log("Body Received:", body);
 
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -81,7 +86,11 @@ app.put("/api/persons/:id", (request, response, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
